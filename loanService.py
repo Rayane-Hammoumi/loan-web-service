@@ -6,6 +6,7 @@ from spyne import Application, rpc, ServiceBase, Unicode, Integer, Decimal, Bool
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
 from spyne.util.wsgi_wrapper import run_twisted
+from bank_db import BankDatabase
 
 from suds.client import Client
 
@@ -24,6 +25,24 @@ class _loanService(ServiceBase):
         # Appelez la méthode extract_information du service TextExtractionService
         extracted_info = client.service.extract_information(input_file)  
         print(extracted_info)
+
+        extracted_info = client.service.extract_information(input_file)  
+        print(extracted_info)
+        
+        db = BankDatabase('client_database.db')
+        client_data = db.get_client_by_id(extracted_info['Numero'])
+
+        if client_data:
+            monthly_income=client_data[2]
+            monthly_expenses = client_data[3]
+            unpaid_loans = client_data[4]
+            current_loans = client_data[5]
+            late_payments = client_data[5]
+            credit_score=client.service.calculate_credit_score(unpaid_loans, current_loans, late_payments)
+            is_solvent=client.service.solvency_verification_service(credit_score, extracted_info['Montant'], extracted_info['Duree'], monthly_income, monthly_expenses)
+        else :
+            print("This person is not a customer of our bank and, therefore, is not solvable.")
+            return 1;
         
         # Appelez la méthode evaluate_property de PropertyEvaluationService (Belkis)
         is_good_property = client.service.evaluate_property('60101')
