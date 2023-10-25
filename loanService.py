@@ -6,6 +6,8 @@ from spyne import Application, rpc, ServiceBase, Unicode, Integer, Decimal, Bool
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
 from spyne.util.wsgi_wrapper import run_twisted
+from credit_score_service.credit_score_service import calculate_credit_score
+from solvency_verification_service.solvency_verification_service import SolvencyVerificationService
 from bank_db import BankDatabase
 
 from suds.client import Client
