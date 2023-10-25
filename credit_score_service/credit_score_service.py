@@ -8,7 +8,7 @@ from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
 from spyne.util.wsgi_wrapper import run_twisted
 
-def calculate_credit_score(cx, non_paid_count, current_loans_count, late_payments_count):
+def calculate_credit_score(ctx, non_paid_count, current_loans_count, late_payments_count):
     # Assign points for each factor
     credit_score=40
     non_paid_points = -20  # Deduct points for each non-paid instance
