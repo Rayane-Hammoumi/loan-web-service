@@ -9,7 +9,7 @@ from spyne.server.wsgi import WsgiApplication
 from spyne.util.wsgi_wrapper import run_twisted
 
 class Credit_score_service(ServiceBase):
-    @rpc(Unicode, Unicode, Unicode, Unicode, Unicode, _returns=Unicode)
+    @rpc(Unicode, Unicode, Unicode, _returns=Unicode)
     def calculate_credit_score(ctx, non_paid_count, current_loans_count, late_payments_count):
         # Assign points for each factor
         credit_score=40
