@@ -7,7 +7,7 @@ current_dir = os.path.dirname(current_dir)
 property_module_path = os.path.join(current_dir, 'models')
 sys.path.insert(1, property_module_path)
 
-from models.property import Property, PropertyType, EnergyEfficiencyRating, UrbanismPlan
+from property_evaluation_service.models.property import Property, PropertyType, EnergyEfficiencyRating, UrbanismPlan
 
 class DataSource:
     def __init__(self, db_path):
