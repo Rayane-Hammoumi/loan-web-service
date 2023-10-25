@@ -24,3 +24,4 @@ class SolvencyVerificationService(ServiceBase):
             return not_solvable
         else:
             return is_solvable
+        

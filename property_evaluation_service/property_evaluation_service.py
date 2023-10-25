@@ -65,7 +65,7 @@ def get_legal_compliance_and_inspection(property: Property):
     }
 
 application = Application([PropertyEvaluationService],
-    tns='http://localhost/loan-service',
+    tns='http://localhost/property-service',
     in_protocol=Soap11(validator='lxml'),
     out_protocol=Soap11()
 )
@@ -74,7 +74,7 @@ if __name__ == '__main__':
     wsgi_app = WsgiApplication(application)
     
     twisted_apps = [
-        (wsgi_app, b'loan-service'),
+        (wsgi_app, b'property-service'),
     ]
 
     sys.exit(run_twisted(twisted_apps, 8080))

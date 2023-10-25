@@ -3,3 +3,4 @@ Prenom: John
 Numero Client: 12345
 Duree du pret: 10
 Montant du pret: 10000
+Reference propriete: 10945

@@ -9,7 +9,7 @@ service_url = 'http://localhost:8081/loan-service/?wsdl'
 # Créez un client SOAP pour le service web
 client = Client(service_url)
 
-with open('/Users/h.hidouri/Downloads/myenv 2/test.txt', 'r') as file:
+with open('/Users/becky/Documents/dev/ISTY/2023_2024/TP/myenv 3/test.txt', 'r') as file:
     file_contents = file.read()
     print(file_contents)
     extracted_info = client.service.app_service(file_contents)        

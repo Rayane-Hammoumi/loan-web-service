@@ -8,9 +8,9 @@ from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
 from spyne.util.wsgi_wrapper import run_twisted
 
-class Credit_score_service(ServiceBase):
-    @rpc(Unicode, Unicode, Unicode, _returns=Unicode)
-    def calculate_credit_score(ctx, non_paid_count, current_loans_count, late_payments_count):
+class Credit_Score_Service(ServiceBase):
+    @rpc(Unicode, Unicode, Unicode, _returns=Integer)
+    def calculate_credit_score(self, non_paid_count, current_loans_count, late_payments_count):
         # Assign points for each factor
         credit_score=40
         non_paid_points = -20  # Deduct points for each non-paid instance
@@ -19,9 +19,28 @@ class Credit_score_service(ServiceBase):
 
         # Calculate the total credit score
         total_score = (non_paid_count * non_paid_points) + (current_loans_count * current_loans_points) + (late_payments_count * late_payments_points)
+        # Calculate the total credit score
+        total_score = (non_paid_count * non_paid_points) + (current_loans_count * current_loans_points) + (late_payments_count * late_payments_points)
 
         # Cap the minimum score at 0
         if total_score < 0:
             total_score = 0
 
         return total_score
+
+
+application = Application([Credit_Score_Service],
+    tns='http://localhost/credit-score-service',
+    in_protocol=Soap11(validator='lxml'),
+    out_protocol=Soap11()
+)
+
+if __name__ == '__main__':
+    wsgi_app = WsgiApplication(application)
+    
+    twisted_apps = [
+        (wsgi_app, b'credit-score-service'),
+    ]
+
+    sys.exit(run_twisted(twisted_apps, 8080))
+    
