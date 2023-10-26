@@ -6,13 +6,14 @@ from spyne import Application, rpc, ServiceBase, Unicode, Integer, Decimal, Bool
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
 from spyne.util.wsgi_wrapper import run_twisted
-from bank_db import BankDatabase
+import sqlite3
 
 from suds.client import Client
 
 property_service_endpoint = "http://localhost:8076/property-service/?wsdl"
 text_extraction_service_endpoint = "http://localhost:8075/text-extraction-service?wsdl"
 credit_score_service_endpoint = "http://localhost:8077/credit-score-service?wsdl"
+solvency_verification_service_endpoint = "http://localhost:8078/solvency-verification-service?wsdl"
 
 class _loanService(ServiceBase):
     
@@ -26,28 +27,12 @@ class _loanService(ServiceBase):
         # Appelez la méthode extract_information du service TextExtractionService
         extracted_info = text_extraction_client.service.extract_information(input_file)  
         print(extracted_info)
+        client_id=extracted_info['Numero']
+        conn = sqlite3.connect('./clients/clients.db')
+        cursor = conn.cursor()
         
-        db = BankDatabase('client_database.db')
-        client_data = db.get_client_by_id(extracted_info['Numero'])
-        
-        # Testing credit score 
-        credit_score_client = Client(credit_score_service_endpoint)
-        credit_score = credit_score_client.service.calculate_credit_score(1, 2, 10)
-        
-        print('credit score:', credit_score)
-
-        # if client_data:
-        #     monthly_income=client_data[2]
-        #     monthly_expenses = client_data[3]
-        #     unpaid_loans = client_data[4]
-        #     current_loans = client_data[5]
-        #     late_payments = client_data[5]
-        #     credit_score=client.service.calculate_credit_score(unpaid_loans, current_loans, late_payments)
-        #     is_solvent=client.service.solvency_verification_service(credit_score, extracted_info['Montant'], extracted_info['Duree'], monthly_income, monthly_expenses)
-        # else :
-        #     print("This person is not a customer of our bank and, therefore, is not solvable.")
-        #     return 1
-        
+        #TODO: appeler les services credit score et solvency verification ici comme j'ai fait
+        # (comme ça a été fait dans credit_score_service_client.py)
         
         # Appelez la méthode evaluate_property de PropertyEvaluationService (Belkis)
         

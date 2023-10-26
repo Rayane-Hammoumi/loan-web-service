@@ -9,8 +9,8 @@ from spyne.server.wsgi import WsgiApplication
 from spyne.util.wsgi_wrapper import run_twisted
 
 class Credit_Score_Service(ServiceBase):
-    @rpc(Unicode, Unicode, Unicode, _returns=Integer)
-    def calculate_credit_score(self, non_paid_count, current_loans_count, late_payments_count):
+    @rpc(Integer, Integer, Integer, _returns=Integer)
+    def calculate_credit_score(self, non_paid_count, current_loans_count, late_payments):
         # Assign points for each factor
         credit_score=40
         non_paid_points = -20  # Deduct points for each non-paid instance
@@ -18,15 +18,14 @@ class Credit_Score_Service(ServiceBase):
         late_payments_points = -30  # Deduct points for each late payment
 
         # Calculate the total credit score
-        total_score = (non_paid_count * non_paid_points) + (current_loans_count * current_loans_points) + (late_payments_count * late_payments_points)
-        # Calculate the total credit score
-        total_score = (non_paid_count * non_paid_points) + (current_loans_count * current_loans_points) + (late_payments_count * late_payments_points)
-
+        credit_score = credit_score + (non_paid_count * non_paid_points) + (current_loans_count * current_loans_points) + (late_payments * late_payments_points)
+    
         # Cap the minimum score at 0
-        if total_score < 0:
-            total_score = 0
+        if credit_score < 0:
+            credit_score = 0
 
-        return total_score
+        print(f"Total Score: {credit_score}")
+        return credit_score
 
 
 application = Application([Credit_Score_Service],
@@ -42,5 +41,5 @@ if __name__ == '__main__':
         (wsgi_app, b'credit-score-service'),
     ]
 
-    sys.exit(run_twisted(twisted_apps, 8080))
+    sys.exit(run_twisted(twisted_apps, 8077))
     
