@@ -29,3 +29,29 @@ Lorsqu'un client (`soap_client.py`) fait appel à l'application composite (`loan
 1. Ouvrez un terminal et exécutez la commande : `python3 other_services.py`
 2. Ouvrez un autre terminal et exécutez la commande : `python3 loanService.py`
 3. Ouvrez un autre terminal et exécutez la commande : `python3 soap_client.py`
+
+## Dockerisation
+
+Pour builder toutes les images
+```bash
+docker-compose -f docker-compose-images.yml build
+```
+
+Pour visualiser toutes les images
+```bash
+docker images
+```
+
+Pour lancer les conteneurs
+```bash
+docker-compose up
+```
+
+Pour arreter et supprimer tous les conteneurs
+```bash
+docker stop $(docker ps -a -q)
+docker rm  $(docker ps -a -q)
+```
+
+Lancer le pipeline 
+python3 test_composite.py

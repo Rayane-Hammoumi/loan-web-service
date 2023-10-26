@@ -41,5 +41,5 @@ if __name__ == '__main__':
         (wsgi_app, b'credit-score-service'),
     ]
 
-    sys.exit(run_twisted(twisted_apps, 8077))
+    sys.exit(run_twisted(twisted_apps, 8080))
     

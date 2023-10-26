@@ -8,8 +8,8 @@ from spyne import Iterable
 from spyne.protocol.soap import Soap11
 from spyne.server.wsgi import WsgiApplication
 from spyne.util.wsgi_wrapper import run_twisted
-from property_evaluation_service.data_source.data_source import DataSource
-from property_evaluation_service.models.property import Property, EnergyEfficiencyRating
+from data_source.data_source import DataSource
+from models.property import Property, EnergyEfficiencyRating
 
 database_path = 'db/property_database.db'
 
