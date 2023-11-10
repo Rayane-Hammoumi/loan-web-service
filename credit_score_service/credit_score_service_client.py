@@ -1,16 +1,15 @@
-# This file is intended only to test if the service is working separately
-import time
-import os
-from suds.client import Client
+import requests
 import sqlite3
 
-credit_score_service_endpoint = 'http://localhost:8077/credit-score-service/?wsdl'
-solvency_verification_service_endpoint = "http://localhost:8078/solvency-verification-service?wsdl"
+# URL des points de terminaison de l'API FastAPI
+credit_score_service_endpoint = 'http://127.0.0.1:8000/credit-score'
+solvency_verification_service_endpoint = 'http://127.0.0.1:8001/solvency-verification'
 
-
-# Créez un client SOAP pour le service web
+# Vos paramètres de client
 client_id = 1
-conn = sqlite3.connect('../clients/clients.db')
+
+# Connectez-vous à la base de données SQLite pour obtenir les données du client
+conn = sqlite3.connect('../composite_service/clients/clients.db')
 cursor = conn.cursor()
 cursor.execute("SELECT * FROM clients WHERE client_id = ?", (client_id,))
 client_data = cursor.fetchone()
@@ -19,41 +18,44 @@ if client_data:
     client_id, balance, red_transactions, current_loans, late_payments = client_data
 else:
     print("Client not found")
-        
-# Testing credit score 
-credit_score_client = Client(credit_score_service_endpoint)
-credit_score = credit_score_client.service.calculate_credit_score(red_transactions, current_loans, late_payments)
-        
-cursor.execute("SELECT amount, date FROM transactions WHERE client_id = ? ORDER BY date", (client_id,))
-transactions = cursor.fetchall()
 
-monthly_savings = {}
+# Appel à l'API FastAPI pour le score de crédit
+credit_score_params = {
+    "non_paid_count": red_transactions,
+    "current_loans_count": current_loans,
+    "late_payments": late_payments
+}
 
-# Go through the transactions
-for amount, date in transactions:
-    month_year = date[:7]
-    print(month_year)
-    print('amount', amount)
-    monthly_savings[month_year] = monthly_savings.get(month_year, 0) + amount
-    print('Saving for the month {}: '.format(month_year), monthly_savings[month_year])
+response = requests.get(credit_score_service_endpoint, params=credit_score_params)
 
-# Calculate the average of monthly savings
-total_savings = sum(monthly_savings.values())
-print('total savings: ', total_savings)
-number_of_months = len(monthly_savings)
-print('number of months: ', number_of_months)
-
-if number_of_months > 0:
-    average_monthly_savings = total_savings / number_of_months
+if response.status_code == 200:
+    credit_score = response.json()["credit_score"]
 else:
-    average_monthly_savings = total_savings #can't divide by 0
+    print(f"Error fetching credit score. Status code: {response.status_code}")
+    credit_score = 0  # Valeur par défaut en cas d'erreur
 
-print("\nAverage monthly savings:", average_monthly_savings)
+# Appel à l'API FastAPI pour la vérification de la solvabilité
+loan_duration = 10
+loan_amount = 200000
+average_monthly_savings = 1000  # Remplacez cela par votre logique de calcul réelle
 
-solvency_verification_client = Client(solvency_verification_service_endpoint)
-loan_duration=10
-loan_amount=200000
-is_solvable = solvency_verification_client.service.verify_solvency(credit_score, loan_amount, loan_duration, average_monthly_savings, balance)
+solvency_verification_params = {
+    "credit_score": credit_score,
+    "loan_amount": loan_amount,
+    "loan_duration": loan_duration,
+    "average_monthly_savings": average_monthly_savings,
+    "balance": balance
+}
+
+response = requests.get(solvency_verification_service_endpoint, params=solvency_verification_params)
+
+if response.status_code == 200:
+    is_solvable = response.json()
+else:
+    print(f"Error verifying solvency. Status code: {response.status_code}")
+    is_solvable = False  # Valeur par défaut en cas d'erreur
+
+# Afficher les résultats
 print('client_id: ', client_id)
 print('red transactions: ', red_transactions)
 print('current loans: ', current_loans)
