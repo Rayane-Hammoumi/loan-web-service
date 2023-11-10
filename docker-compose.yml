@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  property_evaluation_service:
+    image: property_evaluation_service
+    ports:
+      - "8076:8080"
+    volumes:
+      - "./property_evaluation_service/db:/app/db"
+
+  text_extraction_service:
+    image: text_extraction_service
+    ports:
+      - "8075:8080"
+
+  credit_score_service:
+    image: credit_score_service
+    ports:
+      - "8077:8080"
+
+  solvency_verification_service:
+    image: solvency_verification_service
+    ports:
+      - "8078:8080"
+
+  composite_service:
+    image: composite_service
+    ports:
+      - "8081:8080"
+    volumes:
+      - "./composite_service/clients:/app/clients"
+    depends_on:
+      - property_evaluation_service
+      - text_extraction_service
+      - credit_score_service
+      - solvency_verification_service
+

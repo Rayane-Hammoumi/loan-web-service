@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  property_evaluation_service:
+    build:
+      context: ./property_evaluation_service
+      dockerfile: Dockerfile
+    image: property_evaluation_service
+
+  text_extraction_service:
+    build:
+      context: ./text_extraction_service
+      dockerfile: Dockerfile
+    image: text_extraction_service
+
+  solvency_verification_service:
+    build:
+      context: ./solvency_verification_service
+      dockerfile: Dockerfile
+    image: solvency_verification_service
+
+  credit_score_service:
+    build:
+      context: ./credit_score_service
+      dockerfile: Dockerfile
+    image: credit_score_service
+
+  composite_service:
+    build:
+      context: ./composite_service
+      dockerfile: Dockerfile
+    image: composite_service
+
